@@ -1,4 +1,4 @@
-name: Build and Deploy JAR App to Azure Web App - demoecommerce
+name: Build and deploy JAR app to Azure Web App - demoecommerce
 
 on:
   push:
@@ -8,29 +8,28 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Set up Java version
         uses: actions/setup-java@v4
         with:
           java-version: '17'
-          distribution: 'temurin' # You can use 'zulu' or other distributions if preferred
+          distribution: 'adopt-openjdk'  # or 'temurin' if adopt-openjdk is not available
 
       - name: Build with Maven
-        run: mvn clean package -DskipTests=true
+        run: mvn clean install -DskipTests=true
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: 'target/*.jar'
+          path: '${{ github.workspace }}/target/*.jar'
 
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     needs: build
     environment:
       name: 'Production'
@@ -42,11 +41,15 @@ jobs:
         with:
           name: java-app
 
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'demoecommerce'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
           package: '*.jar'
