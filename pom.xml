@@ -52,7 +52,7 @@
 		<dependency>
 			<groupId>com.microsoft.sqlserver</groupId>
 			<artifactId>mssql-jdbc</artifactId>
-			<version>latest-version</version>
+			<version>11.2.2.jre11</version>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
