@@ -17,7 +17,8 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '17'
-          distribution: 'adopt-openjdk'
+          # Omitting distribution will use the default OpenJDK distribution
+          # distribution: 'adopt-openjdk' # You can also try specifying 'zulu' if needed
 
       - name: Build with Maven
         run: mvn clean package -DskipTests=true
