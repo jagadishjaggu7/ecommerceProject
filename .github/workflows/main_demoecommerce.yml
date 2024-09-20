@@ -1,4 +1,4 @@
-name: Build and deploy JAR app to Azure Web App - demoecommerce
+name: Build and Deploy JAR App to Azure Web App - demoecommerce
 
 on:
   push:
@@ -8,17 +8,17 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest # Consider using Ubuntu for consistency and latest features
+    runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Set up Java version
         uses: actions/setup-java@v4
         with:
           java-version: '17'
-          # Omitting distribution will use the default OpenJDK distribution
-          # distribution: 'adopt-openjdk' # You can also try specifying 'zulu' if needed
+          distribution: 'temurin' # or 'zulu', depending on your preference
 
       - name: Build with Maven
         run: mvn clean package -DskipTests=true
@@ -30,7 +30,7 @@ jobs:
           path: '${{ github.workspace }}/target/*.jar'
 
   deploy:
-    runs-on: ubuntu-latest # Consistency with the build job
+    runs-on: ubuntu-latest
     needs: build
     environment:
       name: 'Production'
